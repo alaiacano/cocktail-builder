@@ -3,12 +3,26 @@ import Head from "next/head";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CocktailGrid from "../components/CocktailGrid";
-import { Container } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+      height: "100%",
+    },
+    section: {
+      height: "1000px",
+      paddingTop: 5,
+      backgroundColor: "#fff",
+    },
+  })
+);
 
 const Home = () => {
   const [cocktails, setCocktails] = useState([]);
-  // const table = () =>
-  //   await (await fetch("/.netlify/functions/airtable")).json();
+  const classes = useStyles();
 
   useEffect(() => {
     fetch("/.netlify/functions/airtable")
@@ -25,11 +39,13 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div style={{ display: "flex", height: "100%", width: "1000px" }}>
-        <Container width="lg">
-          <CocktailGrid cocktailList={cocktails} />
-        </Container>
-      </div>
+      <Grid container layout="row">
+        <Grid item xs={12} lg={12}>
+          <div className={classes.section}>
+            <CocktailGrid cocktailList={cocktails} />
+          </div>
+        </Grid>
+      </Grid>
 
       <Footer />
     </div>
