@@ -10,6 +10,7 @@ type Cocktail = {
   bitters: string[];
   juices: string[];
   sweeteners: string[];
+  other: string[];
 };
 const useStyles = makeStyles({
   table: {
@@ -31,6 +32,7 @@ const CocktailGrid = ({ cocktailList }: CocktailGridProps) => {
     { field: "liqueurs", width: 250 },
     { field: "bitters", width: 150 },
     { field: "sweeteners", width: 150 },
+    { field: "other", width: 150 },
   ];
   const rows = cocktailList.map((c, i) => ({ id: i, ...c }));
   return <DataGrid className={classes.table} rows={rows} columns={cols} />;
