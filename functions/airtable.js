@@ -17,12 +17,11 @@ exports.handler = async (event, context, callback) => {
   });
   var base = Airtable.base(AIRTABLE_API_CLIENT_ID);
 
-  const data = [{ wtf: "wtf" }];
+  const data = [];
 
   const records = await base("Table 1")
     .select({
-      // Selecting the first 30 records in Grid view:
-      maxRecords: 1,
+      maxRecords: 1000,
       view: "Grid view",
     })
     .all();
