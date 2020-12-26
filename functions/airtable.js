@@ -19,7 +19,7 @@ exports.handler = async (event, context, callback) => {
 
   const data = [];
 
-  const records = await base("Table 1")
+  const records = await base("Recipes")
     .select({
       maxRecords: 1000,
       view: "Grid view",
