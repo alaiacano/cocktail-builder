@@ -32,7 +32,10 @@ const makeChip = (cocktail: Cocktail, field: string) => {
     return (
       <>
         {cocktail[field].map((ingredient, i) => (
-          <Chip key={i} label={ingredient} />
+          <Chip
+            key={`${cocktail.name} ${field} chip ${i}`}
+            label={ingredient}
+          />
         ))}
       </>
     );

@@ -72,7 +72,7 @@ const Home = () => {
         <title>Next.js Starter!</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Grid container layout="row">
+      <Grid container direction="row">
         <Grid item>
           <AllIngredientSelect
             selectedIngredients={selectedIngredients}
