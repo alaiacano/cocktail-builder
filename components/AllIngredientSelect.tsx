@@ -1,5 +1,5 @@
 import React from "react";
-import { Chip } from "@material-ui/core";
+import { Chip, Paper } from "@material-ui/core";
 
 export type SelectedIngredient = {
   name: string;
@@ -14,7 +14,9 @@ const AllIngredientSelect = ({
   toggleSelection: Function;
 }) => {
   return (
-    <>
+    <Paper>
+      Select the ingredients you have...
+      <br />
       {[...selectedIngredients].sort().map((ing, k) => (
         <Chip
           key={k}
@@ -23,7 +25,7 @@ const AllIngredientSelect = ({
           onClick={() => toggleSelection(ing.name, !ing.selected)}
         />
       ))}
-    </>
+    </Paper>
   );
 };
 export default AllIngredientSelect;

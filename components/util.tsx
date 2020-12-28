@@ -9,6 +9,11 @@ export type Cocktail = {
   other?: string[];
 };
 
+export type InventoryItem = {
+  brand?: string;
+  ingredient: string;
+};
+
 export function listAllIngredients(c: Cocktail): string[] {
   return (c.spirits || []).concat(
     c.liqueurs || [],

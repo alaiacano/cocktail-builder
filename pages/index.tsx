@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import { listAllIngredients } from "../components/util";
+import {
+  Cocktail,
+  InventoryItem,
+  listAllIngredients,
+} from "../components/util";
 import AllIngredientSelect, {
   SelectedIngredient,
 } from "../components/AllIngredientSelect";
@@ -24,7 +28,8 @@ const useStyles = makeStyles((theme) =>
 );
 
 const Home = () => {
-  const [cocktails, setCocktails] = useState([]);
+  const [cocktails, setCocktails] = useState<Cocktail[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [allIngredients, setAllIngredients] = useState<Set<string>>(
     new Set([])
   );
@@ -42,19 +47,34 @@ const Home = () => {
       });
   }, []);
 
+  // Loads the inventory
+  useEffect(() => {
+    fetch("/.netlify/functions/inventory")
+      .then((resp) => resp.json())
+      .then((data) => {
+        setInventory(data);
+      });
+  }, []);
+
   // Sets the list of all used ingredients when the list of cocktails changes.
   useEffect(() => {
-    if (cocktails.length > 1) {
+    const inventorySet: Set<string> = new Set(
+      inventory.map((i) => i.ingredient)
+    );
+    if (cocktails.length > 1 && inventory.length > 0) {
       const allIngWithDupes: string[] = cocktails
         .map((c) => listAllIngredients(c))
         .reduce((a, b) => a.concat(b));
       const allIngUnique: Set<string> = new Set(allIngWithDupes);
       setAllIngredients(allIngUnique);
       setSelectedIngredients(
-        [...allIngUnique].map((i) => ({ name: i, selected: false }))
+        [...allIngUnique].map((i) => ({
+          name: i,
+          selected: inventorySet.has(i),
+        }))
       );
     }
-  }, [cocktails]);
+  }, [cocktails, inventory]);
 
   const toggleIngredientSelect = (name, select) => {
     const updatedSelected = selectedIngredients.map((ing) => {
