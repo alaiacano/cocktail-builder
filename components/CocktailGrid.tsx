@@ -1,17 +1,17 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid } from "@material-ui/data-grid";
+import { Cocktail, listAllIngredients } from "./util";
+import {
+  Chip,
+  Paper,
+  Table,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@material-ui/core";
 
-type Cocktail = {
-  name: string;
-  book?: string;
-  spirits: string[];
-  liqueurs: string[];
-  bitters: string[];
-  juices: string[];
-  sweeteners: string[];
-  other: string[];
-};
 const useStyles = makeStyles({
   table: {
     minWidth: 1200,
@@ -20,10 +20,32 @@ const useStyles = makeStyles({
 
 type CocktailGridProps = {
   cocktailList: Cocktail[];
+  selectedIngredients: Set<string>;
 };
-const CocktailGrid = ({ cocktailList }: CocktailGridProps) => {
-  const classes = useStyles();
 
+const makeChip = (cocktail: Cocktail, field: string) => {
+  if ((field === "name" || field === "book") && cocktail[field]) {
+    return cocktail[field];
+  }
+
+  if (cocktail.hasOwnProperty(field)) {
+    return (
+      <>
+        {cocktail[field].map((ingredient, i) => (
+          <Chip key={i} label={ingredient} />
+        ))}
+      </>
+    );
+  }
+};
+const CocktailGrid = ({
+  cocktailList,
+  selectedIngredients,
+}: CocktailGridProps) => {
+  const classes = useStyles();
+  if (cocktailList.length === 0) {
+    return <></>;
+  }
   const cols = [
     { field: "name", width: 150 },
     { field: "book", width: 150 },
@@ -33,17 +55,49 @@ const CocktailGrid = ({ cocktailList }: CocktailGridProps) => {
     { field: "sweeteners", width: 150 },
     { field: "other", width: 150 },
   ];
-  const flexCols = [
-    { field: "name", width: 100 },
-    { field: "book", flex: 0.1 },
-    { field: "spirits", flex: 0.2 },
-    { field: "liqueurs", flex: 0.1 },
-    { field: "bitters", flex: 0.1 },
-    { field: "sweeteners", flex: 0.1 },
-    { field: "other", flex: 0.2 },
-  ];
-  const rows = cocktailList.map((c, i) => ({ id: i, ...c }));
-  return <DataGrid className={classes.table} rows={rows} columns={flexCols} />;
+
+  const numberOfMissingIngredients = (cocktail: Cocktail) => {
+    const allIngredientsInCocktail = new Set(listAllIngredients(cocktail));
+    return (
+      allIngredientsInCocktail.size -
+      [...allIngredientsInCocktail].filter((i) => selectedIngredients.has(i))
+        .length
+    );
+  };
+
+  return (
+    <TableContainer component={Paper}>
+      <Table aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell align="center">Ingredients Needed</TableCell>
+            {cols.map((col) => (
+              <TableCell align="center">{col.field}</TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {cocktailList.map((row) => {
+            return (
+              <TableRow
+                key={row.name}
+                selected={numberOfMissingIngredients(row) === 0}
+              >
+                <TableCell key={`${row.name} - missing`}>
+                  {numberOfMissingIngredients(row)}
+                </TableCell>
+                {cols.map((col) => (
+                  <TableCell key={`${row.name} - ${col.field}`}>
+                    {makeChip(row, col.field)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 };
 
 export default CocktailGrid;
