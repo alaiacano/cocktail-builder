@@ -21,6 +21,7 @@ const useStyles = makeStyles({
 type CocktailGridProps = {
   cocktailList: Cocktail[];
   selectedIngredients: Set<string>;
+  excludeOther: boolean;
 };
 
 const makeChip = (cocktail: Cocktail, field: string) => {
@@ -44,6 +45,7 @@ const makeChip = (cocktail: Cocktail, field: string) => {
 const CocktailGrid = ({
   cocktailList,
   selectedIngredients,
+  excludeOther,
 }: CocktailGridProps) => {
   const classes = useStyles();
   if (cocktailList.length === 0) {
@@ -55,12 +57,15 @@ const CocktailGrid = ({
     { field: "spirits", width: 250 },
     { field: "liqueurs", width: 250 },
     { field: "bitters", width: 150 },
+    { field: "juices", width: 150 },
     { field: "sweeteners", width: 150 },
     { field: "other", width: 150 },
   ];
 
   const numberOfMissingIngredients = (cocktail: Cocktail) => {
-    const allIngredientsInCocktail = new Set(listAllIngredients(cocktail));
+    const allIngredientsInCocktail = new Set(
+      listAllIngredients(cocktail, excludeOther)
+    );
     return (
       allIngredientsInCocktail.size -
       [...allIngredientsInCocktail].filter((i) => selectedIngredients.has(i))

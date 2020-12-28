@@ -14,12 +14,15 @@ export type InventoryItem = {
   ingredient: string;
 };
 
-export function listAllIngredients(c: Cocktail): string[] {
+export function listAllIngredients(
+  c: Cocktail,
+  excludeOther: boolean
+): string[] {
   return (c.spirits || []).concat(
     c.liqueurs || [],
     c.bitters || [],
     c.juices || [],
-    c.sweeteners || [],
-    c.other || []
+    (!excludeOther && c.sweeteners) || [],
+    (!excludeOther && c.other) || []
   );
 }

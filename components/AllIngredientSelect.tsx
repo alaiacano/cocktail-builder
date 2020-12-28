@@ -6,25 +6,39 @@ export type SelectedIngredient = {
   selected: boolean;
 };
 
+type AllIngredientSelectProps = {
+  selectedIngredients: SelectedIngredient[];
+  toggleSelection: Function;
+  excludeOther: boolean;
+  toggleExcludeOther: Function;
+};
+
 const AllIngredientSelect = ({
   selectedIngredients,
   toggleSelection,
-}: {
-  selectedIngredients: SelectedIngredient[];
-  toggleSelection: Function;
-}) => {
+  excludeOther,
+  toggleExcludeOther,
+}: AllIngredientSelectProps) => {
   return (
     <Paper>
       Select the ingredients you have...
       <br />
-      {[...selectedIngredients].sort().map((ing, k) => (
-        <Chip
-          key={k}
-          label={ing.name}
-          color={ing.selected ? "primary" : "default"}
-          onClick={() => toggleSelection(ing.name, !ing.selected)}
-        />
-      ))}
+      {[...selectedIngredients]
+        .sort((a, b) => (a.name > b.name ? 1 : -1))
+        .map((ing, k) => (
+          <Chip
+            key={k}
+            label={ing.name}
+            color={ing.selected ? "primary" : "default"}
+            onClick={() => toggleSelection(ing.name, !ing.selected)}
+          />
+        ))}
+      <br />
+      <Chip
+        label="Exclude Sweeteners and pantry items"
+        onClick={() => toggleExcludeOther(!excludeOther)}
+        color={excludeOther ? "primary" : "default"}
+      />
     </Paper>
   );
 };

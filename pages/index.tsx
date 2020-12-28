@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) =>
 const Home = () => {
   const [cocktails, setCocktails] = useState<Cocktail[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [excludeOther, setExcludeOther] = useState<boolean>(true);
   const [allIngredients, setAllIngredients] = useState<Set<string>>(
     new Set([])
   );
@@ -63,7 +64,7 @@ const Home = () => {
     );
     if (cocktails.length > 1 && inventory.length > 0) {
       const allIngWithDupes: string[] = cocktails
-        .map((c) => listAllIngredients(c))
+        .map((c) => listAllIngredients(c, excludeOther))
         .reduce((a, b) => a.concat(b));
       const allIngUnique: Set<string> = new Set(allIngWithDupes);
       setAllIngredients(allIngUnique);
@@ -74,7 +75,11 @@ const Home = () => {
         }))
       );
     }
-  }, [cocktails, inventory]);
+  }, [cocktails, inventory, excludeOther]);
+
+  const toggleExcludeOther = (setTo) => {
+    setExcludeOther(setTo);
+  };
 
   const toggleIngredientSelect = (name, select) => {
     const updatedSelected = selectedIngredients.map((ing) => {
@@ -97,12 +102,15 @@ const Home = () => {
           <AllIngredientSelect
             selectedIngredients={selectedIngredients}
             toggleSelection={toggleIngredientSelect}
+            toggleExcludeOther={toggleExcludeOther}
+            excludeOther={excludeOther}
           />
         </Grid>
         <Grid item>
           <div className={classes.section}>
             <CocktailGrid
               cocktailList={cocktails}
+              excludeOther={excludeOther}
               selectedIngredients={
                 new Set(
                   selectedIngredients
